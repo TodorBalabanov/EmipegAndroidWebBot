@@ -7,10 +7,6 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.method.KeyListener;
-import android.view.KeyEvent;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -77,41 +73,6 @@ public class MainActivity extends Activity {
 		((EditText) findViewById(R.id.min_id)).setText("" + minId);
 		((EditText) findViewById(R.id.max_id)).setText("" + maxId);
 
-		KeyListener listener = new KeyListener() {
-
-			@Override
-			public void clearMetaKeyState(View arg0, Editable arg1, int arg2) {
-			}
-
-			@Override
-			public int getInputType() {
-				return 0;
-			}
-
-			@Override
-			public boolean onKeyDown(View arg0, Editable arg1, int arg2, KeyEvent arg3) {
-				return false;
-			}
-
-			@Override
-			public boolean onKeyOther(View arg0, Editable arg1, KeyEvent arg2) {
-				return false;
-			}
-
-			@Override
-			public boolean onKeyUp(View view, Editable edit, int states, KeyEvent event) {
-				try {
-					minId = Integer.valueOf(edit.toString());
-				} catch (Exception ex) {
-				}
-
-				return true;
-			}
-		};
-
-		((EditText) findViewById(R.id.min_id)).setKeyListener(listener);
-		((EditText) findViewById(R.id.max_id)).setKeyListener(listener);
-
 		/*
 		 * Load next profile to check.
 		 */
@@ -140,7 +101,7 @@ public class MainActivity extends Activity {
 
 						((TextView) findViewById(R.id.id_to_check)).setText("id = " + idToCheck);
 
-						browser.loadUrl("http://www.gepime.com/?id=" + idToCheck);
+						browser.loadUrl("http://mobile.gepime.com/?id=" + idToCheck);
 
 						state = WebPageState.PROFILE_SELECTED;
 					}
@@ -177,6 +138,6 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		browser.loadUrl("http://www.gepime.com/");
+		browser.loadUrl("http://mobile.gepime.com/");
 	}
 }
