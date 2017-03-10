@@ -3,7 +3,7 @@ package eu.veldsoft.emipeg.bot;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
