@@ -5,12 +5,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Bot screen.
@@ -26,6 +29,13 @@ public class MainActivity extends Activity {
 	};
 
 	/**
+	 * User profile gender set.
+	 */
+	private enum UserGender {
+		NONE, MALE, FEMALE
+	}
+
+	/**
 	 * Pseudo-random number generator.
 	 */
 	private static final Random PRNG = new Random();
@@ -34,6 +44,11 @@ public class MainActivity extends Activity {
 	 * Track bot states.
 	 */
 	private WebPageState state = WebPageState.LOGGED_OUT;
+
+	/**
+	 * Track user gender.
+	 */
+	private UserGender gender = UserGender.NONE;
 
 	/**
 	 * Web browser view component.
@@ -53,7 +68,7 @@ public class MainActivity extends Activity {
 	/**
 	 * Maximum user id to check.
 	 */
-	private int maxId = 10000000;
+	private int maxId = 100000;
 
 	/**
 	 * {@inheritDoc}
@@ -91,7 +106,13 @@ public class MainActivity extends Activity {
 							return;
 						}
 
-						idToCheck = minId + PRNG.nextInt(maxId - minId + 1);
+						idToCheck = Integer.valueOf(((EditText) findViewById(R.id.id_to_check)).getText().toString());
+						minId = Integer.valueOf(((EditText) findViewById(R.id.min_id)).getText().toString());
+						maxId = Integer.valueOf(((EditText) findViewById(R.id.max_id)).getText().toString());
+
+						//idToCheck = minId + PRNG.nextInt(maxId - minId + 1);
+						idToCheck++;
+						((EditText) findViewById(R.id.id_to_check)).setText("" + idToCheck);
 
 						SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(),
 								MODE_PRIVATE).edit();
@@ -100,7 +121,6 @@ public class MainActivity extends Activity {
 						editor.putInt("max", maxId);
 						editor.commit();
 
-						((TextView) findViewById(R.id.id_to_check)).setText("id = " + idToCheck);
 
 						browser.loadUrl("http://mobile.gepime.com/?id=" + idToCheck);
 
@@ -117,8 +137,41 @@ public class MainActivity extends Activity {
 		browser.getSettings().setJavaScriptEnabled(true);
 		browser.getSettings().setDomStorageEnabled(true);
 
+		/*
+		 * Obtain inner HTML text.
+		 */
+		browser.addJavascriptInterface(new Object() {
+			@JavascriptInterface
+			public void showHTML(final String html) {
+				MainActivity.this.runOnUiThread(new Runnable() {
+					public void run() {
+						if (html.contains("			Жена на ")) {
+							gender = UserGender.FEMALE;
+							state = WebPageState.PROFILE_SELECTED;
+						} else if (html.contains("			Мъж на ")) {
+							gender = UserGender.MALE;
+							state = WebPageState.BEFORE_SEARCH;
+						} else {
+							gender = UserGender.NONE;
+							state = WebPageState.BEFORE_SEARCH;
+						}
+						
+						if(html.contains("Съобщението е изпратено успешно")) {
+							state = WebPageState.BEFORE_SEARCH;
+						}
+					}
+				});
+			}
+		}, "HTMLViewer");
+
 		browser.setWebViewClient(new WebViewClient() {
 			public void onPageFinished(WebView view, String url) {
+				/*
+				 * Load inner HTML text.
+				 */
+				view.loadUrl(
+						"javascript:HTMLViewer.showHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
+
 				/*
 				 * Set user name, password and login.
 				 */
@@ -134,7 +187,7 @@ public class MainActivity extends Activity {
 				} else if (state == WebPageState.LOGGED_IN) {
 					state = WebPageState.BEFORE_SEARCH;
 				} else if (state == WebPageState.PROFILE_SELECTED) {
-					state = WebPageState.BEFORE_SEARCH;
+					view.loadUrl("javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.';}");
 				}
 			}
 		});

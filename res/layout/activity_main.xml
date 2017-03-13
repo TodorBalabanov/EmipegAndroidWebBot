@@ -5,38 +5,43 @@
     android:orientation="vertical"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <TextView
+    <EditText
         android:id="@+id/id_to_check"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:inputType="number"
+        android:text="0" />
 
     <EditText
         android:id="@+id/min_id"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:text="0" />
+        android:text="0"
+        android:visibility="gone" />
 
     <EditText
         android:id="@+id/max_id"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:text="0" />
+        android:text="0"
+        android:visibility="gone" />
 
     <RatingBar
         android:id="@+id/speed"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:numStars="5"
-        android:stepSize="1" />
+        android:stepSize="1"
+        android:visibility="gone" />
 
     <WebView
         android:id="@+id/browser"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center" >
+
         <requestFocus />
     </WebView>
 >
