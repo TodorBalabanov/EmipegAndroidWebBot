@@ -71,6 +71,24 @@ public class MainActivity extends Activity {
 	private int maxId = 100000;
 
 	/**
+	 * Select random id for checking.
+	 */
+	private void randomId() {
+		idToCheck = Integer.valueOf(((EditText) findViewById(R.id.id_to_check)).getText().toString());
+		minId = Integer.valueOf(((EditText) findViewById(R.id.min_id)).getText().toString());
+		maxId = Integer.valueOf(((EditText) findViewById(R.id.max_id)).getText().toString());
+
+		idToCheck = minId + PRNG.nextInt(maxId - minId + 1);
+		((EditText) findViewById(R.id.id_to_check)).setText("" + idToCheck);
+
+		SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit();
+		editor.putInt("id", idToCheck);
+		editor.putInt("min", minId);
+		editor.putInt("max", maxId);
+		editor.commit();
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
@@ -89,48 +107,6 @@ public class MainActivity extends Activity {
 		((EditText) findViewById(R.id.min_id)).setText("" + minId);
 		((EditText) findViewById(R.id.max_id)).setText("" + maxId);
 
-		/*
-		 * Load next profile to check.
-		 */
-		Executors.newScheduledThreadPool(1).scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-				runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						if (browser == null) {
-							return;
-						}
-
-						if (state != WebPageState.BEFORE_SEARCH) {
-							return;
-						}
-
-						idToCheck = Integer.valueOf(((EditText) findViewById(R.id.id_to_check)).getText().toString());
-						minId = Integer.valueOf(((EditText) findViewById(R.id.min_id)).getText().toString());
-						maxId = Integer.valueOf(((EditText) findViewById(R.id.max_id)).getText().toString());
-
-						//idToCheck = minId + PRNG.nextInt(maxId - minId + 1);
-						idToCheck++;
-						((EditText) findViewById(R.id.id_to_check)).setText("" + idToCheck);
-
-						SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(),
-								MODE_PRIVATE).edit();
-						editor.putInt("id", idToCheck);
-						editor.putInt("min", minId);
-						editor.putInt("max", maxId);
-						editor.commit();
-
-
-						browser.loadUrl("http://mobile.gepime.com/?id=" + idToCheck);
-
-						state = WebPageState.PROFILE_SELECTED;
-					}
-				});
-
-			}
-		}, 0, 1000, TimeUnit.MILLISECONDS);
-
 		browser = (WebView) findViewById(R.id.browser);
 		browser.getSettings()
 				.setUserAgentString("Mozilla/5.0 (X11; U; Linux i686; en-US;rv:1.9.0.4) Gecko/20100101 Firefox/4.0");
@@ -145,19 +121,65 @@ public class MainActivity extends Activity {
 			public void showHTML(final String html) {
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
+						if (html.contains("Изход") && state == WebPageState.LOGGED_OUT) {
+							//Toast.makeText(MainActivity.this, "Test point 1 ...", Toast.LENGTH_SHORT).show();
+							state = WebPageState.LOGGED_IN;
+						}
+
+						if (html.contains("Съобщението е изпратено успешно")) {
+							//Toast.makeText(MainActivity.this, "Test point 2 ...", Toast.LENGTH_SHORT).show();
+							state = WebPageState.MESSAGE_SENT;
+						}
+
 						if (html.contains("			Жена на ")) {
+							//Toast.makeText(MainActivity.this, "Test point 3 ...", Toast.LENGTH_SHORT).show();
 							gender = UserGender.FEMALE;
 							state = WebPageState.PROFILE_SELECTED;
 						} else if (html.contains("			Мъж на ")) {
+							//Toast.makeText(MainActivity.this, "Test point 4 ...", Toast.LENGTH_SHORT).show();
+							randomId();
 							gender = UserGender.MALE;
 							state = WebPageState.BEFORE_SEARCH;
-						} else {
+						} else if (html.contains("Изтрит профил")) {
+							//Toast.makeText(MainActivity.this, "Test point 5 ...", Toast.LENGTH_SHORT).show();
+							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						}
-						
-						if(html.contains("Съобщението е изпратено успешно")) {
+
+						/*
+						 * Set user name, password and login.
+						 */
+						if (state == WebPageState.LOGGED_OUT) {
+							//Toast.makeText(MainActivity.this, "Test point 6 ...", Toast.LENGTH_SHORT).show();
+							browser.loadUrl(
+									"javascript:{var uselessvar = document.getElementById('rememberme').checked = 'true';}");
+							browser.loadUrl("javascript:{var uselessvar = document.getElementById('u2').value = '';}");
+							browser.loadUrl("javascript:{var uselessvar = document.getElementById('p2').value = '';}");
+							browser.loadUrl(
+									"javascript:{var uselessvar = document.getElementById('login_button').click();}");
+
+							state = WebPageState.LOGGED_IN;
+							browser.loadUrl("https://wwww.gepime.com/");
+						} else if (state == WebPageState.LOGGED_IN) {
+							//Toast.makeText(MainActivity.this, "Test point 7 ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.BEFORE_SEARCH;
+							browser.loadUrl("https://wwww.gepime.com/");
+						} else if (state == WebPageState.BEFORE_SEARCH) {
+							//Toast.makeText(MainActivity.this, "Test point 8 ...", Toast.LENGTH_SHORT).show();
+							browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
+						} else if (state == WebPageState.PROFILE_SELECTED) {
+							//Toast.makeText(MainActivity.this, "Test point 9 ...", Toast.LENGTH_SHORT).show();
+							browser.loadUrl(
+									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.';}");
+						} else if (state == WebPageState.MESSAGE_SENT) {
+							//Toast.makeText(MainActivity.this, "Test point 10 ...", Toast.LENGTH_SHORT).show();
+							state = WebPageState.BEFORE_SEARCH;
+							browser.loadUrl("https://wwww.gepime.com/");
+						} else {
+							//Toast.makeText(MainActivity.this, "Test point 11 ...", Toast.LENGTH_SHORT).show();
+							state = WebPageState.BEFORE_SEARCH;
+							browser.loadUrl("https://wwww.gepime.com/");
 						}
 					}
 				});
@@ -171,27 +193,10 @@ public class MainActivity extends Activity {
 				 */
 				view.loadUrl(
 						"javascript:HTMLViewer.showHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
-
-				/*
-				 * Set user name, password and login.
-				 */
-				if (state == WebPageState.LOGGED_OUT) {
-					view.loadUrl(
-							"javascript:{var uselessvar = document.getElementById('rememberme').checked = 'true';}");
-					view.loadUrl(
-							"javascript:{var uselessvar = document.getElementById('u2').value = 'todorb3@abv.bg';}");
-					view.loadUrl("javascript:{var uselessvar = document.getElementById('p2').value = 'todorb3';}");
-					view.loadUrl("javascript:{var uselessvar = document.getElementById('login_button').click();}");
-
-					state = WebPageState.LOGGED_IN;
-				} else if (state == WebPageState.LOGGED_IN) {
-					state = WebPageState.BEFORE_SEARCH;
-				} else if (state == WebPageState.PROFILE_SELECTED) {
-					view.loadUrl("javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.';}");
-				}
 			}
 		});
 
-		browser.loadUrl("http://mobile.gepime.com/");
+		randomId();
+		browser.loadUrl("https://wwww.gepime.com/");
 	}
 }

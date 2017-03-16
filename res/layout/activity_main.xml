@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:text="0"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <EditText
         android:id="@+id/max_id"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:text="0"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <RatingBar
         android:id="@+id/speed"
