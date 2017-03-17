@@ -1,19 +1,20 @@
 package eu.veldsoft.emipeg.bot;
 
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.Switch;
 
 /**
  * Bot screen.
@@ -39,6 +40,11 @@ public class MainActivity extends Activity {
 	 * Pseudo-random number generator.
 	 */
 	private static final Random PRNG = new Random();
+
+	/**
+	 * Is running flag.
+	 */
+	private boolean running = false;
 
 	/**
 	 * Track bot states.
@@ -98,6 +104,32 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		/*
+		 * Load login page and stop bot running.
+		 */
+		((Button) findViewById(R.id.open)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				running = false;
+				browser.loadUrl("https://wwww.gepime.com/");
+			}
+		});
+
+		/*
+		 * Handle start and stop of the bot.
+		 */
+		((Switch) findViewById(R.id.running)).setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton button, boolean isChecked) {
+				running = isChecked;
+				if(running == true) {
+					randomId();
+					state = WebPageState.BEFORE_SEARCH;
+				}
+				browser.loadUrl("https://wwww.gepime.com/");
+			}
+		});
+
+		/*
 		 * Start from the last id which was checked.
 		 */
 		idToCheck = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("id", 1);
@@ -121,27 +153,36 @@ public class MainActivity extends Activity {
 			public void showHTML(final String html) {
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
+						if (running == false) {
+							return;
+						}
+
 						if (html.contains("Изход") && state == WebPageState.LOGGED_OUT) {
-							//Toast.makeText(MainActivity.this, "Test point 1 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 1
+							// ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.LOGGED_IN;
 						}
 
 						if (html.contains("Съобщението е изпратено успешно")) {
-							//Toast.makeText(MainActivity.this, "Test point 2 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 2
+							// ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.MESSAGE_SENT;
 						}
 
 						if (html.contains("			Жена на ")) {
-							//Toast.makeText(MainActivity.this, "Test point 3 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 3
+							// ...", Toast.LENGTH_SHORT).show();
 							gender = UserGender.FEMALE;
 							state = WebPageState.PROFILE_SELECTED;
 						} else if (html.contains("			Мъж на ")) {
-							//Toast.makeText(MainActivity.this, "Test point 4 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 4
+							// ...", Toast.LENGTH_SHORT).show();
 							randomId();
 							gender = UserGender.MALE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Изтрит профил")) {
-							//Toast.makeText(MainActivity.this, "Test point 5 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 5
+							// ...", Toast.LENGTH_SHORT).show();
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
@@ -151,7 +192,8 @@ public class MainActivity extends Activity {
 						 * Set user name, password and login.
 						 */
 						if (state == WebPageState.LOGGED_OUT) {
-							//Toast.makeText(MainActivity.this, "Test point 6 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 6
+							// ...", Toast.LENGTH_SHORT).show();
 							browser.loadUrl(
 									"javascript:{var uselessvar = document.getElementById('rememberme').checked = 'true';}");
 							browser.loadUrl("javascript:{var uselessvar = document.getElementById('u2').value = '';}");
@@ -162,22 +204,27 @@ public class MainActivity extends Activity {
 							state = WebPageState.LOGGED_IN;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.LOGGED_IN) {
-							//Toast.makeText(MainActivity.this, "Test point 7 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 7
+							// ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.BEFORE_SEARCH) {
-							//Toast.makeText(MainActivity.this, "Test point 8 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 8
+							// ...", Toast.LENGTH_SHORT).show();
 							browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
 						} else if (state == WebPageState.PROFILE_SELECTED) {
-							//Toast.makeText(MainActivity.this, "Test point 9 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 9
+							// ...", Toast.LENGTH_SHORT).show();
 							browser.loadUrl(
 									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.';}");
 						} else if (state == WebPageState.MESSAGE_SENT) {
-							//Toast.makeText(MainActivity.this, "Test point 10 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 10
+							// ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else {
-							//Toast.makeText(MainActivity.this, "Test point 11 ...", Toast.LENGTH_SHORT).show();
+							// Toast.makeText(MainActivity.this, "Test point 11
+							// ...", Toast.LENGTH_SHORT).show();
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						}
@@ -195,8 +242,5 @@ public class MainActivity extends Activity {
 						"javascript:HTMLViewer.showHTML('<html>'+document.getElementsByTagName('html')[0].innerHTML+'</html>');");
 			}
 		});
-
-		randomId();
-		browser.loadUrl("https://wwww.gepime.com/");
 	}
 }
