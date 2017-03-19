@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -209,6 +208,12 @@ public class MainActivity extends Activity {
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("ограничение на профила")) {
+							// Toast.makeText(MainActivity.this, "Test point 8
+							// ...", Toast.LENGTH_SHORT).show();
+							randomId();
+							gender = UserGender.NONE;
+							state = WebPageState.BEFORE_SEARCH;
+						} else if (html.contains("Заключен профил")) {
 							// Toast.makeText(MainActivity.this, "Test point 8
 							// ...", Toast.LENGTH_SHORT).show();
 							randomId();
