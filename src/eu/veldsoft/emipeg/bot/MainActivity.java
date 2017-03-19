@@ -154,6 +154,9 @@ public class MainActivity extends Activity {
 			public void showHTML(final String html) {
 				MainActivity.this.runOnUiThread(new Runnable() {
 					public void run() {
+						/*
+						 * Manage logged in or logged out conditions.
+						 */
 						if (running == false) {
 							return;
 						}
@@ -178,6 +181,9 @@ public class MainActivity extends Activity {
 							state = WebPageState.BEFORE_SEARCH;
 						}
 
+						/*
+						 * Different types of profiles or blocked users.
+						 */
 						if (html.contains("			Жена на ")) {
 							// Toast.makeText(MainActivity.this, "Test point 3
 							// ...", Toast.LENGTH_SHORT).show();
@@ -259,20 +265,17 @@ public class MainActivity extends Activity {
 							randomId();
 							state = WebPageState.BEFORE_SEARCH;
 
+							/*
+							 * Wait for a while before to proceed.
+							 */
 							new CountDownTimer(1000, 1000) {
 								public void onFinish() {
 									browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
 								}
+
 								public void onTick(long millisUntilFinished) {
 								}
 							}.start();
-
-							// new Handler().postDelayed(new Runnable() {
-							// @Override
-							// public void run() {
-							// browser.loadUrl("https://wwww.gepime.com/");
-							// }
-							// }, 1000);
 						} else if (state == WebPageState.MESSAGE_SENT) {
 							// Toast.makeText(MainActivity.this, "Test point 12
 							// ...", Toast.LENGTH_SHORT).show();
