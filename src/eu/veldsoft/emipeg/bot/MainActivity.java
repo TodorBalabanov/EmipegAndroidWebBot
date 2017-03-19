@@ -208,6 +208,12 @@ public class MainActivity extends Activity {
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
+						} else if (html.contains("ограничение на профила")) {
+							// Toast.makeText(MainActivity.this, "Test point 8
+							// ...", Toast.LENGTH_SHORT).show();
+							randomId();
+							gender = UserGender.NONE;
+							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Изтрит профил")) {
 							// Toast.makeText(MainActivity.this, "Test point 8
 							// ...", Toast.LENGTH_SHORT).show();
