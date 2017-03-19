@@ -6,6 +6,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -169,14 +171,14 @@ public class MainActivity extends Activity {
 							randomId();
 							state = WebPageState.MESSAGE_SENT;
 						}
-						
+
 						if (html.contains("Потребители излъчващи се на живо")) {
 							// Toast.makeText(MainActivity.this, "Test point 2
 							// ...", Toast.LENGTH_SHORT).show();
 							randomId();
 							state = WebPageState.BEFORE_SEARCH;
 						}
-						
+
 						if (html.contains("			Жена на ")) {
 							// Toast.makeText(MainActivity.this, "Test point 3
 							// ...", Toast.LENGTH_SHORT).show();
@@ -242,7 +244,24 @@ public class MainActivity extends Activity {
 							// Toast.makeText(MainActivity.this, "Test point 11
 							// ...", Toast.LENGTH_SHORT).show();
 							browser.loadUrl(
-									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.';}");
+									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
+							randomId();
+							state = WebPageState.BEFORE_SEARCH;
+
+							new CountDownTimer(1000, 1000) {
+								public void onFinish() {
+									browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
+								}
+								public void onTick(long millisUntilFinished) {
+								}
+							}.start();
+
+							// new Handler().postDelayed(new Runnable() {
+							// @Override
+							// public void run() {
+							// browser.loadUrl("https://wwww.gepime.com/");
+							// }
+							// }, 1000);
 						} else if (state == WebPageState.MESSAGE_SENT) {
 							// Toast.makeText(MainActivity.this, "Test point 12
 							// ...", Toast.LENGTH_SHORT).show();
