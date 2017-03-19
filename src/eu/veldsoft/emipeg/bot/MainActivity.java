@@ -166,9 +166,17 @@ public class MainActivity extends Activity {
 						if (html.contains("Съобщението е изпратено успешно")) {
 							// Toast.makeText(MainActivity.this, "Test point 2
 							// ...", Toast.LENGTH_SHORT).show();
+							randomId();
 							state = WebPageState.MESSAGE_SENT;
 						}
-
+						
+						if (html.contains("Потребители излъчващи се на живо")) {
+							// Toast.makeText(MainActivity.this, "Test point 2
+							// ...", Toast.LENGTH_SHORT).show();
+							randomId();
+							state = WebPageState.BEFORE_SEARCH;
+						}
+						
 						if (html.contains("			Жена на ")) {
 							// Toast.makeText(MainActivity.this, "Test point 3
 							// ...", Toast.LENGTH_SHORT).show();
