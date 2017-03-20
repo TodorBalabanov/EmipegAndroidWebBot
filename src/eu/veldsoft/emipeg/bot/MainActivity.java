@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.Toast;
 
 /**
  * Bot screen.
@@ -76,6 +77,16 @@ public class MainActivity extends Activity {
 	 * Maximum user id to check.
 	 */
 	private int maxId = 10000000;
+
+	/**
+	 * Show test point toast.
+	 * 
+	 * @param number
+	 *            Number of the test point.
+	 */
+	private void debug(int number) {
+		Toast.makeText(MainActivity.this, "Test point " + number + " ...", Toast.LENGTH_SHORT).show();
+	}
 
 	/**
 	 * Select random id for checking.
@@ -162,21 +173,18 @@ public class MainActivity extends Activity {
 						}
 
 						if (html.contains("Изход") && state == WebPageState.LOGGED_OUT) {
-							// Toast.makeText(MainActivity.this, "Test point 1
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(1);
 							state = WebPageState.LOGGED_IN;
 						}
 
 						if (html.contains("Съобщението е изпратено успешно")) {
-							// Toast.makeText(MainActivity.this, "Test point 2
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(2);
 							randomId();
 							state = WebPageState.MESSAGE_SENT;
 						}
 
 						if (html.contains("Потребители излъчващи се на живо")) {
-							// Toast.makeText(MainActivity.this, "Test point 2
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(3);
 							randomId();
 							state = WebPageState.BEFORE_SEARCH;
 						}
@@ -185,49 +193,41 @@ public class MainActivity extends Activity {
 						 * Different types of profiles or blocked users.
 						 */
 						if (html.contains("			Жена на ")) {
-							// Toast.makeText(MainActivity.this, "Test point 3
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(4);
 							gender = UserGender.FEMALE;
 							state = WebPageState.PROFILE_SELECTED;
 						} else if (html.contains("			Мъж на ")) {
-							// Toast.makeText(MainActivity.this, "Test point 4
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(5);
 							randomId();
 							gender = UserGender.MALE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (Ж+Ж) на ")) {
-							// Toast.makeText(MainActivity.this, "Test point 5
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(6);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (М+М) на ")) {
-							// Toast.makeText(MainActivity.this, "Test point 6
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(7);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (М+Ж) на ")) {
-							// Toast.makeText(MainActivity.this, "Test point 7
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(8);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("ограничение на профила")) {
-							// Toast.makeText(MainActivity.this, "Test point 8
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(9);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Заключен профил")) {
-							// Toast.makeText(MainActivity.this, "Test point 8
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(10);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Изтрит профил")) {
-							// Toast.makeText(MainActivity.this, "Test point 8
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(11);
 							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
@@ -237,8 +237,7 @@ public class MainActivity extends Activity {
 						 * Set user name, password and login.
 						 */
 						if (state == WebPageState.LOGGED_OUT) {
-							// Toast.makeText(MainActivity.this, "Test point 9
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(12);
 							browser.loadUrl(
 									"javascript:{var uselessvar = document.getElementById('rememberme').checked = 'true';}");
 							browser.loadUrl("javascript:{var uselessvar = document.getElementById('u2').value = '';}");
@@ -249,17 +248,14 @@ public class MainActivity extends Activity {
 							state = WebPageState.LOGGED_IN;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.LOGGED_IN) {
-							// Toast.makeText(MainActivity.this, "Test point 10
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(13);
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.BEFORE_SEARCH) {
-							// Toast.makeText(MainActivity.this, "Test point 8
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(14);
 							browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
 						} else if (state == WebPageState.PROFILE_SELECTED) {
-							// Toast.makeText(MainActivity.this, "Test point 11
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(15);
 							browser.loadUrl(
 									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
 							randomId();
@@ -277,13 +273,11 @@ public class MainActivity extends Activity {
 								}
 							}.start();
 						} else if (state == WebPageState.MESSAGE_SENT) {
-							// Toast.makeText(MainActivity.this, "Test point 12
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(16);
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else {
-							// Toast.makeText(MainActivity.this, "Test point 13
-							// ...", Toast.LENGTH_SHORT).show();
+							debug(17);
 							state = WebPageState.BEFORE_SEARCH;
 							browser.loadUrl("https://wwww.gepime.com/");
 						}
