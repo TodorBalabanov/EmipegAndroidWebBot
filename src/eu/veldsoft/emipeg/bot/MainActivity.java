@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 	 *            Number of the test point.
 	 */
 	private void debug(int number) {
-		Toast.makeText(MainActivity.this, "Test point " + number + " ...", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(MainActivity.this, "Test point " + number + " ...", Toast.LENGTH_SHORT).show();
 	}
 
 	/**
@@ -185,7 +185,6 @@ public class MainActivity extends Activity {
 
 						if (html.contains("Потребители излъчващи се на живо")) {
 							debug(3);
-							randomId();
 							state = WebPageState.BEFORE_SEARCH;
 						}
 
@@ -198,37 +197,30 @@ public class MainActivity extends Activity {
 							state = WebPageState.PROFILE_SELECTED;
 						} else if (html.contains("			Мъж на ")) {
 							debug(5);
-							randomId();
 							gender = UserGender.MALE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (Ж+Ж) на ")) {
 							debug(6);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (М+М) на ")) {
 							debug(7);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("			Двойка (М+Ж) на ")) {
 							debug(8);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("ограничение на профила")) {
 							debug(9);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Заключен профил")) {
 							debug(10);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						} else if (html.contains("Изтрит профил")) {
 							debug(11);
-							randomId();
 							gender = UserGender.NONE;
 							state = WebPageState.BEFORE_SEARCH;
 						}
@@ -253,12 +245,12 @@ public class MainActivity extends Activity {
 							browser.loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.BEFORE_SEARCH) {
 							debug(14);
+							randomId();
 							browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
 						} else if (state == WebPageState.PROFILE_SELECTED) {
 							debug(15);
 							browser.loadUrl(
 									"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
-							randomId();
 							state = WebPageState.BEFORE_SEARCH;
 
 							/*
