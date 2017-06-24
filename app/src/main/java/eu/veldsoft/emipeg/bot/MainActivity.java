@@ -14,6 +14,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -28,35 +29,50 @@ public class MainActivity extends Activity {
 	 */
 	private static final Random PRNG = new Random();
 
-	;
 	/**
 	 * Web browser view component.
 	 */
 	WebView browser = null;
+
 	/**
 	 * Is running flag.
 	 */
 	private boolean running = false;
+
 	/**
 	 * Track bot states.
 	 */
 	private WebPageState state = WebPageState.LOGGED_OUT;
+
 	/**
 	 * Track user gender.
 	 */
 	private UserGender gender = UserGender.NONE;
+
 	/**
 	 * Check user id for female profiles.
 	 */
 	private int idToCheck = 0;
+
 	/**
 	 * Minimum user id to check.
 	 */
 	private int minId = 1;
+
 	/**
 	 * Maximum user id to check.
 	 */
 	private int maxId = 10000000;
+
+	/**
+	 * Minimum user id found.
+	 */
+	private int minFoundId = Integer.MAX_VALUE;
+
+	/**
+	 * Maximum user id found.
+	 */
+	private int maxFoundId = Integer.MIN_VALUE;
 
 	/**
 	 * Show test point toast.
@@ -126,9 +142,13 @@ public class MainActivity extends Activity {
 		idToCheck = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("id", 1);
 		minId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("min", 1);
 		maxId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("max", 100000000);
+		minFoundId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("min_found", Integer.MAX_VALUE);
+		maxFoundId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("max_found", Integer.MIN_VALUE);
 
 		((EditText) findViewById(R.id.min_id)).setText("" + minId);
 		((EditText) findViewById(R.id.max_id)).setText("" + maxId);
+		((TextView) findViewById(R.id.min_found_id)).setText(" " + minFoundId);
+		((TextView) findViewById(R.id.max_found_id)).setText(" " + maxFoundId);
 
 		browser = (WebView) findViewById(R.id.browser);
 		browser.getSettings()
@@ -171,6 +191,22 @@ public class MainActivity extends Activity {
 						 * Different types of profiles or blocked users.
 						 */
 						if (html.contains("			Жена на ")) {
+							/*
+							 * Keep track of the min and max ids found only for female profiles.
+							 */
+							if(idToCheck > maxFoundId) {
+								maxFoundId = idToCheck;
+							}
+							if(idToCheck < minFoundId) {
+								minFoundId = idToCheck;
+							}
+							((TextView) findViewById(R.id.min_found_id)).setText(" " + minFoundId);
+							((TextView) findViewById(R.id.max_found_id)).setText(" " + maxFoundId);
+							SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit();
+							editor.putInt("min_found", minFoundId);
+							editor.putInt("max_found", maxFoundId);
+							editor.commit();
+
 							debug(4);
 							gender = UserGender.FEMALE;
 							state = WebPageState.PROFILE_SELECTED;

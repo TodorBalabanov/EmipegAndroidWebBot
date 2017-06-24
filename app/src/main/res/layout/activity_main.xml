@@ -46,6 +46,20 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:text="0"/>
+
+        <TextView
+            android:id="@+id/min_found_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/max_found_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <RatingBar
