@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
 	/**
 	 * Maximum user id to check.
 	 */
-	private int maxId = 10000000;
+	private int maxId = Integer.MAX_VALUE;
 
 	/**
 	 * Minimum user id found.
@@ -81,6 +81,33 @@ public class MainActivity extends Activity {
 	 */
 	private void debug(int number) {
 		//Toast.makeText(MainActivity.this, "Test point " + number + " ...", Toast.LENGTH_SHORT).show();
+	}
+
+	/**
+	 * Load URL address in the web browser web view.
+	 *
+	 * @param url Address to load.
+	 * @param time Milliseconds to wait before loading.
+	 */
+	private void loadUrl(final String url, final long time) {
+		/*
+		 * Wait for a while before to proceed.
+		 */
+		new CountDownTimer(time, time) {
+			public void onFinish() {
+				browser.loadUrl(url);
+			}
+			public void onTick(long millisUntilFinished) {}
+		}.start();
+	}
+
+	/**
+	 * Load URL address in the web browser web view.
+	 *
+	 * @param url Address to load.
+	 */
+	private void loadUrl(String url) {
+		browser.loadUrl(url);
 	}
 
 	/**
@@ -117,7 +144,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				running = false;
-				browser.loadUrl("https://wwww.gepime.com/");
+				loadUrl("https://wwww.gepime.com/", 50);
 			}
 		});
 
@@ -132,7 +159,7 @@ public class MainActivity extends Activity {
 					randomId();
 					state = WebPageState.BEFORE_SEARCH;
 				}
-				browser.loadUrl("https://wwww.gepime.com/");
+				loadUrl("https://wwww.gepime.com/", 50);
 			}
 		});
 
@@ -141,7 +168,7 @@ public class MainActivity extends Activity {
 		 */
 		idToCheck = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("id", 1);
 		minId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("min", 1);
-		maxId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("max", 100000000);
+		maxId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("max", Integer.MAX_VALUE);
 		minFoundId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("min_found", Integer.MAX_VALUE);
 		maxFoundId = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).getInt("max_found", Integer.MIN_VALUE);
 
@@ -245,48 +272,38 @@ public class MainActivity extends Activity {
 						 */
 						if (state == WebPageState.LOGGED_OUT) {
 							debug(12);
-							browser.loadUrl(
+							loadUrl(
 									  "javascript:{var uselessvar = document.getElementById('rememberme').checked = 'true';}");
-							browser.loadUrl("javascript:{var uselessvar = document.getElementById('u2').value = '';}");
-							browser.loadUrl("javascript:{var uselessvar = document.getElementById('p2').value = '';}");
-							browser.loadUrl(
+							loadUrl("javascript:{var uselessvar = document.getElementById('u2').value = '';}");
+							loadUrl("javascript:{var uselessvar = document.getElementById('p2').value = '';}");
+							loadUrl(
 									  "javascript:{var uselessvar = document.getElementById('login_button').click();}");
 
 							state = WebPageState.LOGGED_IN;
-							browser.loadUrl("https://wwww.gepime.com/");
+							loadUrl("https://wwww.gepime.com/", 50);
 						} else if (state == WebPageState.LOGGED_IN) {
 							debug(13);
 							state = WebPageState.BEFORE_SEARCH;
-							browser.loadUrl("https://wwww.gepime.com/");
+							loadUrl("https://wwww.gepime.com/", 50);
 						} else if (state == WebPageState.BEFORE_SEARCH) {
 							debug(14);
 							randomId();
-							browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
+							loadUrl("https://www.gepime.com/?id=" + idToCheck, 50);
 						} else if (state == WebPageState.PROFILE_SELECTED) {
 							debug(15);
-							browser.loadUrl(
+							loadUrl(
 									  "javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
 							state = WebPageState.BEFORE_SEARCH;
 
-							/*
-							 * Wait for a while before to proceed.
-							 */
-							new CountDownTimer(1000, 1000) {
-								public void onFinish() {
-									browser.loadUrl("https://www.gepime.com/?id=" + idToCheck);
-								}
-
-								public void onTick(long millisUntilFinished) {
-								}
-							}.start();
+							loadUrl("https://www.gepime.com/?id=" + idToCheck, 10000);
 						} else if (state == WebPageState.MESSAGE_SENT) {
 							debug(16);
 							state = WebPageState.BEFORE_SEARCH;
-							browser.loadUrl("https://wwww.gepime.com/");
+							loadUrl("https://wwww.gepime.com/", 50);
 						} else {
 							debug(17);
 							state = WebPageState.BEFORE_SEARCH;
-							browser.loadUrl("https://wwww.gepime.com/");
+							loadUrl("https://wwww.gepime.com/", 50);
 						}
 					}
 				});

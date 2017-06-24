@@ -1,1 +1,1 @@
--> Keep track of min and max ids.
+-> Store all valid ids in a list and send them by email.
