@@ -15,6 +15,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 
@@ -151,7 +152,7 @@ public class MainActivity extends Activity {
 		((Button) findViewById(R.id.open)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				loadUrl("https://wwww.gepime.com/", 50);
+				loadUrl("https://wwww.gepime.com/");
 				running = false;
 			}
 		});
@@ -167,7 +168,7 @@ public class MainActivity extends Activity {
 					randomId();
 					state = WebPageState.BEFORE_SEARCH;
 				}
-				loadUrl("https://wwww.gepime.com/", 50);
+				loadUrl("https://wwww.gepime.com/");
 			}
 		});
 
@@ -206,75 +207,6 @@ public class MainActivity extends Activity {
 							return;
 						}
 
-						if (html.contains("Изход") && state == WebPageState.LOGGED_OUT) {
-							debug(1);
-							state = WebPageState.LOGGED_IN;
-						}
-
-						if (html.contains("Съобщението е изпратено успешно")) {
-							debug(2);
-							randomId();
-							state = WebPageState.MESSAGE_SENT;
-						}
-
-						if (html.contains("Потребители излъчващи се на живо")) {
-							debug(3);
-							state = WebPageState.BEFORE_SEARCH;
-						}
-
-						/*
-						 * Different types of profiles or blocked users.
-						 */
-						if (html.contains("			Жена на ")) {
-							/*
-							 * Keep track of the min and max ids found only for female profiles.
-							 */
-							if(idToCheck > maxFoundId) {
-								maxFoundId = idToCheck;
-							}
-							if(idToCheck < minFoundId) {
-								minFoundId = idToCheck;
-							}
-							((TextView) findViewById(R.id.min_found_id)).setText(" " + minFoundId);
-							((TextView) findViewById(R.id.max_found_id)).setText(" " + maxFoundId);
-							SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit();
-							editor.putInt("min_found", minFoundId);
-							editor.putInt("max_found", maxFoundId);
-							editor.commit();
-
-							debug(4);
-							gender = UserGender.FEMALE;
-							state = WebPageState.PROFILE_SELECTED;
-						} else if (html.contains("			Мъж на ")) {
-							debug(5);
-							gender = UserGender.MALE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("			Двойка (Ж+Ж) на ")) {
-							debug(6);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("			Двойка (М+М) на ")) {
-							debug(7);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("			Двойка (М+Ж) на ")) {
-							debug(8);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("ограничение на профила")) {
-							debug(9);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("Заключен профил")) {
-							debug(10);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						} else if (html.contains("Изтрит профил")) {
-							debug(11);
-							gender = UserGender.NONE;
-							state = WebPageState.BEFORE_SEARCH;
-						}
-
 						/*
 						 * Set user name, password and login.
 						 */
@@ -288,30 +220,85 @@ public class MainActivity extends Activity {
 									  "javascript:{var uselessvar = document.getElementById('login_button').click();}");
 
 							state = WebPageState.LOGGED_IN;
-							loadUrl("https://wwww.gepime.com/", 50);
+							loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.LOGGED_IN) {
 							debug(13);
+							randomId();
 							state = WebPageState.BEFORE_SEARCH;
-							loadUrl("https://wwww.gepime.com/", 50);
+							loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.BEFORE_SEARCH) {
 							debug(14);
-							randomId();
-							loadUrl("https://www.gepime.com/?id=" + idToCheck, 50);
+							state = WebPageState.SEARCH_DONE;
+							loadUrl("https://www.gepime.com/?id=" + idToCheck, 100);
+						} else if (state == WebPageState.SEARCH_DONE) {
+							/*
+							 * Different types of profiles or blocked users.
+							 */
+							if (html.contains("			Жена на ")) {
+							/*
+							 * Keep track of the min and max ids found only for female profiles.
+							 */
+								if(idToCheck > maxFoundId) {
+									maxFoundId = idToCheck;
+								}
+								if(idToCheck < minFoundId) {
+									minFoundId = idToCheck;
+								}
+								((TextView) findViewById(R.id.min_found_id)).setText(" " + minFoundId);
+								((TextView) findViewById(R.id.max_found_id)).setText(" " + maxFoundId);
+								SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit();
+								editor.putInt("min_found", minFoundId);
+								editor.putInt("max_found", maxFoundId);
+								editor.commit();
+
+								debug(4);
+								gender = UserGender.FEMALE;
+								state = WebPageState.PROFILE_SELECTED;
+							} else if (html.contains("			Мъж на ")) {
+								debug(5);
+								gender = UserGender.MALE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("			Двойка (Ж+Ж) на ")) {
+								debug(6);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("			Двойка (М+М) на ")) {
+								debug(7);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("			Двойка (М+Ж) на ")) {
+								debug(8);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("ограничение на профила")) {
+								debug(9);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("Заключен профил")) {
+								debug(10);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							} else if (html.contains("Изтрит профил")) {
+								debug(11);
+								gender = UserGender.NONE;
+								state = WebPageState.LOGGED_IN;
+							}
+							loadUrl("https://wwww.gepime.com/");
 						} else if (state == WebPageState.PROFILE_SELECTED) {
 							debug(15);
 							loadUrl(
 									  "javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
-							state = WebPageState.BEFORE_SEARCH;
+							state = WebPageState.LOGGED_IN;
 
-							loadUrl("https://www.gepime.com/?id=" + idToCheck, 15000);
+							loadUrl("https://www.gepime.com/", 30000);
 						} else if (state == WebPageState.MESSAGE_SENT) {
 							debug(16);
-							state = WebPageState.BEFORE_SEARCH;
-							loadUrl("https://wwww.gepime.com/", 50);
+							state = WebPageState.LOGGED_IN;
+							loadUrl("https://wwww.gepime.com/");
 						} else {
 							debug(17);
-							state = WebPageState.BEFORE_SEARCH;
-							loadUrl("https://wwww.gepime.com/", 50);
+							state = WebPageState.LOGGED_IN;
+							loadUrl("https://wwww.gepime.com/");
 						}
 					}
 				});
