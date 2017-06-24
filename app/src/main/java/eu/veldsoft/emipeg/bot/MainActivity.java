@@ -90,6 +90,10 @@ public class MainActivity extends Activity {
 	 * @param time Milliseconds to wait before loading.
 	 */
 	private void loadUrl(final String url, final long time) {
+		if (running == false) {
+			return;
+		}
+
 		/*
 		 * Wait for a while before to proceed.
 		 */
@@ -107,6 +111,10 @@ public class MainActivity extends Activity {
 	 * @param url Address to load.
 	 */
 	private void loadUrl(String url) {
+		if (running == false) {
+			return;
+		}
+
 		browser.loadUrl(url);
 	}
 
@@ -143,8 +151,8 @@ public class MainActivity extends Activity {
 		((Button) findViewById(R.id.open)).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				running = false;
 				loadUrl("https://wwww.gepime.com/", 50);
+				running = false;
 			}
 		});
 
@@ -295,7 +303,7 @@ public class MainActivity extends Activity {
 									  "javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
 							state = WebPageState.BEFORE_SEARCH;
 
-							loadUrl("https://www.gepime.com/?id=" + idToCheck, 10000);
+							loadUrl("https://www.gepime.com/?id=" + idToCheck, 15000);
 						} else if (state == WebPageState.MESSAGE_SENT) {
 							debug(16);
 							state = WebPageState.BEFORE_SEARCH;
