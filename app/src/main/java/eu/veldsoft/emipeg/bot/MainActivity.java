@@ -2,6 +2,7 @@ package eu.veldsoft.emipeg.bot;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -17,7 +18,15 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Bot screen.
@@ -29,6 +38,11 @@ public class MainActivity extends Activity {
 	 * Pseudo-random number generator.
 	 */
 	private static final Random PRNG = new Random();
+
+	/**
+	 * Name of the file used to store ids.
+	 */
+	private static final String IDS_FILE_NAME = "ids.bin";
 
 	/**
 	 * Web browser view component.
@@ -74,6 +88,11 @@ public class MainActivity extends Activity {
 	 * Maximum user id found.
 	 */
 	private int maxFoundId = Integer.MIN_VALUE;
+
+	/**
+	 * Set of ids found.
+	 */
+	private Set<Integer> ids = new HashSet<Integer>();
 
 	/**
 	 * Show test point toast.
@@ -147,6 +166,17 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		/*
+		 * Load ids found in previous sessions.
+		 */
+		try {
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream(getFilesDir()+IDS_FILE_NAME));
+			ids = (HashSet<Integer>) in.readObject();
+			in.close();
+		} catch (IOException e) {
+		} catch (ClassNotFoundException e) {
+		}
+
+		/*
 		 * Load login page and stop bot running.
 		 */
 		((Button) findViewById(R.id.open)).setOnClickListener(new View.OnClickListener() {
@@ -154,6 +184,24 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				loadUrl("https://wwww.gepime.com/");
 				running = false;
+			}
+		});
+
+		/*
+		 * Report found ids by email.
+		 */
+		((Button) findViewById(R.id.report)).setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("message/rfc822");
+				intent.putExtra(Intent.EXTRA_EMAIL  , new String[]{"tol@abv.bg"});
+				intent.putExtra(Intent.EXTRA_SUBJECT, "Report - "+new Date()+" ...");
+				intent.putExtra(Intent.EXTRA_TEXT   , ids.toString());
+				try {
+					startActivity(Intent.createChooser(intent, "Send ids report..."));
+				} catch (android.content.ActivityNotFoundException ex) {
+				}
 			}
 		});
 
@@ -244,8 +292,25 @@ public class MainActivity extends Activity {
 								if(idToCheck < minFoundId) {
 									minFoundId = idToCheck;
 								}
+
+								ids.add(idToCheck);
+
+								/**
+								 * Keep list of the ids.
+								 */
+								try {
+									ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(getFilesDir()+IDS_FILE_NAME));
+									out.writeObject(ids);
+									out.close();
+								} catch (IOException e) {
+								}
+
 								((TextView) findViewById(R.id.min_found_id)).setText(" " + minFoundId);
 								((TextView) findViewById(R.id.max_found_id)).setText(" " + maxFoundId);
+
+								/**
+								 * Keep values in the shared preferences.
+								 */
 								SharedPreferences.Editor editor = getSharedPreferences(MainActivity.class.getName(), MODE_PRIVATE).edit();
 								editor.putInt("min_found", minFoundId);
 								editor.putInt("max_found", maxFoundId);

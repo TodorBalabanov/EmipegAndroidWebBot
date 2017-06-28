@@ -18,6 +18,12 @@
             android:text="Open"
             android:visibility="gone"/>
 
+        <Button
+            android:id="@+id/report"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Report"/>
+
         <Switch
             android:id="@+id/running"
             android:layout_width="wrap_content"
