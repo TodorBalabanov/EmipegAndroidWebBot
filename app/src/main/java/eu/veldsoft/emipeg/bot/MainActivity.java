@@ -377,7 +377,7 @@ public class MainActivity extends Activity {
 								} else if (state == WebPageState.PROFILE_SELECTED) {
 									 debug(15);
 									 loadUrl(
-												"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей.'; profilePMSend('Профил - Нов разговор');}");
+												"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей! Как си? С каква цел си в сайта? Поздрави, Тодор'; profilePMSend('Профил - Нов разговор');}");
 									 state = WebPageState.LOGGED_IN;
 
 									 loadUrl("https://www.gepime.com/", Integer.valueOf(((EditText) findViewById(R.id.timeout)).getText().toString()));
