@@ -11,6 +11,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -376,8 +377,19 @@ public class MainActivity extends Activity {
 									 loadUrl("https://wwww.gepime.com/");
 								} else if (state == WebPageState.PROFILE_SELECTED) {
 									 debug(15);
-									 loadUrl(
-												"javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей! Как си? С каква цел си в сайта? Поздрави, Тодор'; profilePMSend('Профил - Нов разговор');}");
+
+									 if (((CheckBox) findViewById(R.id.message_send)).isChecked()) {
+										  loadUrl(
+													 "javascript:{var uselessvar = document.getElementById('pm-input-content').value = 'Здравей! Как си? С каква цел си в сайта? Поздрави, Тодор'; profilePMSend('Профил - Нов разговор');}");
+									 }
+									 if (((CheckBox) findViewById(R.id.friendship_send)).isChecked()) {
+										  loadUrl(
+													 "javascript:{inviteFriend(" + idToCheck + ");Analytics.track('profile', 'friend_invite');}");
+										  loadUrl(
+													 "javascript:{var uselessvar = document.getElementById('invCustText').value = 'Здравей! Как си? С каква цел си в сайта? Поздрави, Тодор';}", 100);
+										  loadUrl("javascript:{ajaxSubmit('friendInviteForm', 'invitationContainer');}", 400);
+									 }
+
 									 state = WebPageState.LOGGED_IN;
 
 									 loadUrl("https://www.gepime.com/", Integer.valueOf(((EditText) findViewById(R.id.timeout)).getText().toString()));

@@ -24,6 +24,18 @@
             android:layout_height="wrap_content"
             android:text="Report"/>
 
+        <CheckBox
+            android:id="@+id/message_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+        <CheckBox
+            android:id="@+id/friendship_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
         <Switch
             android:id="@+id/running"
             android:layout_width="wrap_content"
@@ -51,7 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:text="0"/>
+            android:text="0"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/min_found_id"
@@ -92,6 +105,5 @@
 
         <requestFocus/>
     </WebView>
-    >
 
 </LinearLayout>
