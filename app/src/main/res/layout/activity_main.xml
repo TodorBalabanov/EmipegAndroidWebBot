@@ -9,54 +9,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/open"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Open"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/report"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Report"/>
-
-        <CheckBox
-            android:id="@+id/message_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""/>
-
-        <CheckBox
-            android:id="@+id/friendship_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""/>
-
-        <Switch
-            android:id="@+id/running"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""/>
-
-        <EditText
-            android:id="@+id/min_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="0"
-            android:visibility="visible"/>
-
-        <EditText
-            android:id="@+id/max_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="0"
-            android:visibility="visible"/>
 
         <EditText
             android:id="@+id/id_to_check"
@@ -65,37 +19,7 @@
             android:inputType="number"
             android:text="0"
             android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/min_found_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/max_found_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0"
-            android:visibility="gone"/>
-
-        <EditText
-            android:id="@+id/timeout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="5000"
-            android:visibility="visible"/>
     </LinearLayout>
-
-    <RatingBar
-        android:id="@+id/speed"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="1"
-        android:visibility="gone"/>
 
     <WebView
         android:id="@+id/browser"
